@@ -1,5 +1,6 @@
 package com.codingchallenge.order.service;
 
+import com.codingchallenge.file.writer.ConsoleWriterService;
 import com.codingchallenge.item.model.Item;
 import com.codingchallenge.itemfactory.service.FactoryProvider;
 import com.codingchallenge.order.model.ShoppingBasket;
@@ -23,6 +24,9 @@ public class ShoppingBasketService {
     @Autowired
     private ShoppingBasket basket;
 
+    @Autowired
+    private ConsoleWriterService writer;
+
     public void processOrder(String[] productLines) {
 
         for (String productLine : productLines) {
@@ -32,6 +36,7 @@ public class ShoppingBasketService {
             }
         }
         ITaxCalculator tax = new BasicSalesTaxCalculator();
+        writer.printReceipt(basket, tax.calculateTax(basket));
         basket.clearBasket();
     }
 

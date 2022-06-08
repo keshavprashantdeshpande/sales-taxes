@@ -1,8 +1,10 @@
 package com.codingchallenge.file.reader.service;
 
 import com.codingchallenge.file.reader.exception.WrongInputFormatException;
+import com.codingchallenge.order.service.ShoppingBasketService;
 import com.codingchallenge.util.helper.HelperClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ public class FileReaderService {
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String REGEX_FOR_INPUT = "\\d*\\s+[\\w\\s]+at \\d+\\.\\d{2}";
 
+    @Autowired
+    private ShoppingBasketService basketService;
+
     public void readFile(String... args) throws IOException {
         for (String fileName : args) {
             log.info("Reading file with name: {}", fileName);
@@ -29,6 +34,7 @@ public class FileReaderService {
                 String data = new String(bdata, StandardCharsets.UTF_8);
                 String[] lines = data.split(NEW_LINE_SEPARATOR);
                 this.validateInput(lines);
+                basketService.processOrder(lines);
             } catch (IOException ex) {
                 log.error("Error occurred while reading file with name fileName {}", fileName, ex);
                 throw new IOException("Error reading file with name " + fileName);
