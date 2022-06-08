@@ -1,19 +1,26 @@
 package com.codingchallenge;
 
+import com.codingchallenge.file.reader.service.FileReaderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.IOException;
+
 @SpringBootApplication
 public class SalestaxApplication implements CommandLineRunner {
+
+    @Autowired
+    private FileReaderService reader;
 
     public static void main(String[] args) {
         SpringApplication.run(SalestaxApplication.class, args);
     }
 
     @Override
-    public void run(String... args) {
-
+    public void run(String... args) throws IOException {
+        reader.readFile(args);
     }
 
 }
