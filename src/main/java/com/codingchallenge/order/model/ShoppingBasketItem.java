@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Component
 @Slf4j
 @Getter
 @Setter
@@ -18,8 +17,9 @@ public class ShoppingBasketItem {
     private double priceAfterTax;
     private ITaxRate taxRate;
 
-    public ShoppingBasketItem(Item item, ITaxRate taxRate) {
+    public ShoppingBasketItem(Item item, int quantity, ITaxRate taxRate) {
         this.item = item;
+        this.quantity = quantity;
         this.taxRate = taxRate;
     }
 
