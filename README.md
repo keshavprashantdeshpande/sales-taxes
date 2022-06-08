@@ -21,3 +21,12 @@ Decoupling use cases: Based on the typical use cases of the system, I decided to
 Design patterns: 
 1. To accommodate the part of the product using which we can easily add and create groups of product, I decided to use the factory pattern
 2. Changing nature of the tax rate along with the requirement to adjust some additional duties, called for the use of decorator pattern for the tax rates used
+
+# How to run the application?
+To build the application
+
+mvn clean install
+
+To run the application
+
+mvn spring-boot:run
