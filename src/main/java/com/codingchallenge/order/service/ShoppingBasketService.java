@@ -4,6 +4,8 @@ import com.codingchallenge.item.model.Item;
 import com.codingchallenge.itemfactory.service.FactoryProvider;
 import com.codingchallenge.order.model.ShoppingBasket;
 import com.codingchallenge.order.model.ShoppingBasketItem;
+import com.codingchallenge.taxcalculator.ITaxCalculator;
+import com.codingchallenge.taxcalculator.service.BasicSalesTaxCalculator;
 import com.codingchallenge.taxrate.ITaxRate;
 import com.codingchallenge.taxrate.service.ImportDuty;
 import com.codingchallenge.taxrate.service.SaleTaxRate;
@@ -29,7 +31,7 @@ public class ShoppingBasketService {
                 basket.addShoppingItem(item);
             }
         }
-
+        ITaxCalculator tax = new BasicSalesTaxCalculator();
         basket.clearBasket();
     }
 
@@ -44,7 +46,7 @@ public class ShoppingBasketService {
             price = Double.valueOf(itemsDetails[itemsDetails.length - 1]);
             quantity = Integer.valueOf(itemsDetails[0]);
         } catch (NumberFormatException ex) {
-
+            log.error("There was error parsing the input", ex);
         }
         isImported = line.contains("imported");
         itemsDetails = ArrayUtils.remove(itemsDetails, itemsDetails.length - 1);
