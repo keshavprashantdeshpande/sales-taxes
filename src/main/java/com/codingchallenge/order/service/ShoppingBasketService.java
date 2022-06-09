@@ -1,5 +1,7 @@
 package com.codingchallenge.order.service;
 
+import com.codingchallenge.file.reader.exception.WrongInputFormatException;
+import com.codingchallenge.file.reader.service.FileReaderService;
 import com.codingchallenge.file.writer.ConsoleWriterService;
 import com.codingchallenge.item.model.Item;
 import com.codingchallenge.itemfactory.service.FactoryProvider;
@@ -15,6 +17,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 @Slf4j
 public class ShoppingBasketService {
@@ -27,8 +31,11 @@ public class ShoppingBasketService {
     @Autowired
     private ConsoleWriterService writer;
 
-    public void processOrder(String[] productLines) {
+    @Autowired
+    private FileReaderService reader;
 
+    public void processOrder(String... args) throws IOException, WrongInputFormatException {
+        String[] productLines = reader.readFile(args);
         for (String productLine : productLines) {
             ShoppingBasketItem item = extractItems(productLine);
             if (item != null) {

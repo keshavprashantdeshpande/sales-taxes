@@ -21,10 +21,8 @@ public class FileReaderService {
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String REGEX_FOR_INPUT = "\\d*\\s+[\\w\\s]+at \\d+\\.\\d{2}";
 
-    @Autowired
-    private ShoppingBasketService basketService;
-
-    public void readFile(String... args) throws IOException {
+    public String[] readFile(String... args) throws IOException, WrongInputFormatException {
+        String[] lines = null;
         for (String fileName : args) {
             log.info("Reading file with name: {}", fileName);
             Resource resource = new ClassPathResource(fileName);
@@ -32,9 +30,8 @@ public class FileReaderService {
             try {
                 byte[] bdata = FileCopyUtils.copyToByteArray(inputStream);
                 String data = new String(bdata, StandardCharsets.UTF_8);
-                String[] lines = data.split(NEW_LINE_SEPARATOR);
+                lines = data.split(NEW_LINE_SEPARATOR);
                 this.validateInput(lines);
-                basketService.processOrder(lines);
             } catch (IOException ex) {
                 log.error("Error occurred while reading file with name fileName {}", fileName, ex);
                 throw new IOException("Error reading file with name " + fileName);
@@ -42,6 +39,7 @@ public class FileReaderService {
                 log.error("Please check the format of the input given ", fileName, ex);
             }
         }
+        return lines;
     }
 
     private void validateInput(String[] lines) throws WrongInputFormatException {

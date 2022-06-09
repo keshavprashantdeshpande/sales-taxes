@@ -1,6 +1,7 @@
 package com.codingchallenge;
 
-import com.codingchallenge.file.reader.service.FileReaderService;
+import com.codingchallenge.file.reader.exception.WrongInputFormatException;
+import com.codingchallenge.order.service.ShoppingBasketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,15 +13,15 @@ import java.io.IOException;
 public class SalestaxApplication implements CommandLineRunner {
 
     @Autowired
-    private FileReaderService reader;
+    private ShoppingBasketService service;
 
     public static void main(String[] args) {
         SpringApplication.run(SalestaxApplication.class, args);
     }
 
     @Override
-    public void run(String... args) throws IOException {
-        reader.readFile(args);
+    public void run(String... args) throws IOException, WrongInputFormatException {
+        service.processOrder(args);
     }
 
 }
