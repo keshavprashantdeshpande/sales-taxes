@@ -9,9 +9,7 @@ import com.codingchallenge.order.model.ShoppingBasket;
 import com.codingchallenge.order.model.ShoppingBasketItem;
 import com.codingchallenge.taxcalculator.ITaxCalculator;
 import com.codingchallenge.taxcalculator.service.BasicSalesTaxCalculator;
-import com.codingchallenge.taxrate.ITaxRate;
-import com.codingchallenge.taxrate.service.ImportDuty;
-import com.codingchallenge.taxrate.service.SaleTaxRate;
+import com.codingchallenge.taxrate.service.TaxRateService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,9 @@ public class ShoppingBasketService {
 
     @Autowired
     private FileReaderService reader;
+
+    @Autowired
+    private TaxRateService taxService;
 
     public void processOrder(String... args) throws IOException, WrongInputFormatException {
         String[] productLines = reader.readFile(args);
@@ -68,7 +69,7 @@ public class ShoppingBasketService {
         String name = ArrayUtils.toString(itemsDetails);
         product = getProduct(price, name, isImported);
 
-        items = new ShoppingBasketItem(product, quantity, getTaxRate(product));
+        items = new ShoppingBasketItem(product, quantity, taxService.getTaxRate(product));
         return items;
     }
 
@@ -88,17 +89,4 @@ public class ShoppingBasketService {
         return product;
     }
 
-    private ITaxRate getTaxRate(Item product) {
-        ITaxRate tax = null;
-        if (!product.getExempted().isExempted()) {
-            tax = new SaleTaxRate(10);
-            if (product.isImported()) {
-                tax = new ImportDuty(tax);
-            }
-        } else if (product.isImported()) {
-            tax = new SaleTaxRate(0);
-            tax = new ImportDuty(tax);
-        }
-        return tax;
-    }
 }
