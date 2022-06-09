@@ -1,10 +1,8 @@
 package com.codingchallenge.file.reader.service;
 
 import com.codingchallenge.file.reader.exception.WrongInputFormatException;
-import com.codingchallenge.order.service.ShoppingBasketService;
 import com.codingchallenge.util.helper.HelperClass;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -35,8 +33,6 @@ public class FileReaderService {
             } catch (IOException ex) {
                 log.error("Error occurred while reading file with name fileName {}", fileName, ex);
                 throw new IOException("Error reading file with name " + fileName);
-            } catch (WrongInputFormatException ex) {
-                log.error("Please check the format of the input given ", fileName, ex);
             }
         }
         return lines;
