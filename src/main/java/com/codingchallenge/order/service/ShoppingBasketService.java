@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+/**
+ * This class is responsible for all the main operations like creating items from the input file, adding those items in the shopping cart,
+ * creating and calculating tax
+ */
 @Service
 @Slf4j
 @Getter
@@ -35,16 +39,27 @@ public class ShoppingBasketService {
         this.itemService = itemService;
     }
 
+    /**
+     * @param args
+     * @throws IOException
+     * @throws WrongInputFormatException
+     */
     public void processOrder(String... args) throws IOException, WrongInputFormatException {
         for (String arg : args) {
             String[] itemLines = reader.readFile(arg);
             this.createShoppingBasket(itemLines);
             ITaxCalculator tax = new BasicSalesTaxCalculator();
-            writer.printReceipt(basket, tax.calculateTax(basket));
+            basket.setTotalSalesTax(tax.calculateTax(basket));
+            basket.calculateTotalPrice();
+            writer.printReceipt(basket);
             basket.clearBasket();
         }
     }
 
+    /**
+     * @param itemLines Represents each line from the input file seperated by newline
+     * @return Shopping basket which contains all the items in it
+     */
     public ShoppingBasket createShoppingBasket(String[] itemLines) {
         for (String productLine : itemLines) {
             ShoppingBasketItem item = itemService.extractItems(productLine);

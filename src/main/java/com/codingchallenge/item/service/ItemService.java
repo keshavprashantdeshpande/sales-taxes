@@ -18,6 +18,12 @@ public class ItemService {
     @Autowired
     private TaxRateService taxService;
 
+    /**
+     * Maps each line from the input file to the corresponding item in the shopping basket
+     *
+     * @param line Each line from the input file
+     * @return Created basket item which contains item along with other data like quantity
+     */
     public ShoppingBasketItem extractItems(String line) {
         ShoppingBasketItem item = null;
         Item product = null;
@@ -43,6 +49,14 @@ public class ItemService {
         return item;
     }
 
+    /**
+     * It creates varioud types of items for us like book item, music item etc based on the name of the item
+     *
+     * @param price      Price of the item
+     * @param name       Name of the item
+     * @param isImported Whether the item is imported or not
+     * @return Item created based on the name
+     */
     public Item getItem(double price, String name, boolean isImported) {
         Item item = null;
         if (name.contains("book")) {

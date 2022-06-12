@@ -19,6 +19,14 @@ public class FileReaderService {
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String REGEX_FOR_INPUT = "\\d*\\s+[\\w\\s]+at \\d+\\.\\d{2}";
 
+    /**
+     * Read the contents of the file and return an array of string which contains the input from the files
+     *
+     * @param fileName Name of the file to be processed
+     * @return Lines from the file separated by newline
+     * @throws IOException               File is not found or could not be read
+     * @throws WrongInputFormatException When the lines in input file do not match the regex
+     */
     public String[] readFile(String fileName) throws IOException, WrongInputFormatException {
         String[] lines = null;
         log.info("Reading file with name: {}", fileName);
@@ -36,6 +44,12 @@ public class FileReaderService {
         return lines;
     }
 
+    /**
+     * Validates the input against the provided regex
+     *
+     * @param lines Each line from the input file
+     * @throws WrongInputFormatException When the lines in input file do not match the regex
+     */
     private void validateInput(String[] lines) throws WrongInputFormatException {
         for (String line : lines) {
             if (!HelperClass.validateRegex(line, REGEX_FOR_INPUT)) {
