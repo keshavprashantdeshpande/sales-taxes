@@ -17,8 +17,7 @@ public class ConsoleWriterService {
      */
     public void printReceipt(ShoppingBasket basket) {
         for (ShoppingBasketItem item : basket.getBasketItems()) {
-            String imported = item.getItem().isImported() ? " imported " : " ";
-            log.info(item.getQuantity() + imported + item.getItem().getName() + ": " + item.getPriceAfterTax());
+            log.info(item.toString());
         }
         log.info("Sales Taxes: " + basket.getTotalSalesTax());
         log.info("Total: " + basket.getTotalPrice());
