@@ -8,6 +8,8 @@ import com.codingchallenge.order.model.ShoppingBasket;
 import com.codingchallenge.order.model.ShoppingBasketItem;
 import com.codingchallenge.taxcalculator.ITaxCalculator;
 import com.codingchallenge.taxcalculator.service.BasicSalesTaxCalculator;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.io.IOException;
 
 @Service
 @Slf4j
+@Getter
+@Setter
 public class ShoppingBasketService {
 
     private ShoppingBasket basket;
