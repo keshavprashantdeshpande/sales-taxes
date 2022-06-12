@@ -7,6 +7,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+/**
+ * Parent class which will hold any kind of item in it. Can be extended to create specific kind of items. Contains
+ * general attributes associated with products as members
+ */
 @Component
 @Slf4j
 @Getter
@@ -31,4 +35,13 @@ public abstract class Item {
 
     public abstract ItemFactory getFactory();
 
+    @Override
+    public String toString() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", isImported=" + isImported +
+                ", exempted=" + exempted +
+                '}';
+    }
 }
