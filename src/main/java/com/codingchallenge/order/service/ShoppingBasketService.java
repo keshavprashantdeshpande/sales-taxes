@@ -34,19 +34,20 @@ public class ShoppingBasketService {
     public void processOrder(String... args) throws IOException, WrongInputFormatException {
         for (String arg : args) {
             String[] itemLines = reader.readFile(arg);
-            this.createShoppingBasket(itemLines, basket);
+            this.createShoppingBasket(itemLines);
             ITaxCalculator tax = new BasicSalesTaxCalculator();
             writer.printReceipt(basket, tax.calculateTax(basket));
             basket.clearBasket();
         }
     }
 
-    public void createShoppingBasket(String[] itemLines, ShoppingBasket basket) {
+    public ShoppingBasket createShoppingBasket(String[] itemLines) {
         for (String productLine : itemLines) {
             ShoppingBasketItem item = itemService.extractItems(productLine);
             if (item != null) {
                 basket.addShoppingItem(item);
             }
         }
+        return this.basket;
     }
 }
