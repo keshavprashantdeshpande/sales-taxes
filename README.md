@@ -29,7 +29,7 @@ mvn clean install
 
 To run the application
 
-mvn spring-boot:run -Dspring-boot.run.arguments="input1.txt"
+mvn spring-boot:run -Dspring-boot.run.arguments="input1.txt input2.txt input3.txt"
 
 To build image from the application
 

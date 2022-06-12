@@ -42,7 +42,8 @@ public class ItemService {
         itemsDetails = ArrayUtils.remove(itemsDetails, itemsDetails.length - 1);
         itemsDetails = ArrayUtils.removeElement(itemsDetails, "imported");
         itemsDetails = ArrayUtils.remove(itemsDetails, 0);
-        String name = ArrayUtils.toString(itemsDetails);
+        String name = ArrayUtils.toString(itemsDetails).replace(",", " ").replace("{", "").replace("}", "").trim();
+
         product = getItem(price, name, isImported);
 
         item = new ShoppingBasketItem(product, quantity, taxService.getTaxRate(product));
