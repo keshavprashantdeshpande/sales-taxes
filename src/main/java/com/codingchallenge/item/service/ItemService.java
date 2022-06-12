@@ -19,7 +19,7 @@ public class ItemService {
     private TaxRateService taxService;
 
     public ShoppingBasketItem extractItems(String line) {
-        ShoppingBasketItem items = null;
+        ShoppingBasketItem item = null;
         Item product = null;
         String[] itemsDetails = line.split(ITEM_SEPARATOR);
         double price = 0;
@@ -39,23 +39,23 @@ public class ItemService {
         String name = ArrayUtils.toString(itemsDetails);
         product = getItem(price, name, isImported);
 
-        items = new ShoppingBasketItem(product, quantity, taxService.getTaxRate(product));
-        return items;
+        item = new ShoppingBasketItem(product, quantity, taxService.getTaxRate(product));
+        return item;
     }
 
     public Item getItem(double price, String name, boolean isImported) {
-        Item product = null;
+        Item item = null;
         if (name.contains("book")) {
-            product = FactoryProvider.getFactory("book").createProduct(name, price, isImported);
+            item = FactoryProvider.getFactory("book").createProduct(name, price, isImported);
         } else if (name.contains("music")) {
-            product = FactoryProvider.getFactory("music").createProduct(name, price, isImported);
+            item = FactoryProvider.getFactory("music").createProduct(name, price, isImported);
         } else if (name.contains("chocolate")) {
-            product = FactoryProvider.getFactory("food").createProduct(name, price, isImported);
+            item = FactoryProvider.getFactory("food").createProduct(name, price, isImported);
         } else if (name.contains("pills")) {
-            product = FactoryProvider.getFactory("medical").createProduct(name, price, isImported);
+            item = FactoryProvider.getFactory("medical").createProduct(name, price, isImported);
         } else {
-            product = FactoryProvider.getFactory("other").createProduct(name, price, isImported);
+            item = FactoryProvider.getFactory("other").createProduct(name, price, isImported);
         }
-        return product;
+        return item;
     }
 }
