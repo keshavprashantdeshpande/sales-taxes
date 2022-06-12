@@ -5,7 +5,6 @@ import com.codingchallenge.taxrate.ITaxRate;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 @Slf4j
 @Getter
@@ -23,4 +22,9 @@ public class ShoppingBasketItem {
         this.taxRate = taxRate;
     }
 
+    @Override
+    public String toString() {
+        String imported = item.isImported() ? " imported " : " ";
+        return quantity + imported + item.getName() + ": " + priceAfterTax;
+    }
 }

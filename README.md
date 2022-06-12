@@ -29,4 +29,12 @@ mvn clean install
 
 To run the application
 
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.arguments="input1.txt input2.txt input3.txt"
+
+To build image from the application
+
+docker build -t sales_app_v1 .
+
+To run the container
+
+docker run sales_app_v1

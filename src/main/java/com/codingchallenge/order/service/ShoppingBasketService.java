@@ -3,90 +3,70 @@ package com.codingchallenge.order.service;
 import com.codingchallenge.file.reader.exception.WrongInputFormatException;
 import com.codingchallenge.file.reader.service.FileReaderService;
 import com.codingchallenge.file.writer.ConsoleWriterService;
-import com.codingchallenge.item.model.Item;
-import com.codingchallenge.itemfactory.service.FactoryProvider;
+import com.codingchallenge.item.service.ItemService;
 import com.codingchallenge.order.model.ShoppingBasket;
 import com.codingchallenge.order.model.ShoppingBasketItem;
 import com.codingchallenge.taxcalculator.ITaxCalculator;
 import com.codingchallenge.taxcalculator.service.BasicSalesTaxCalculator;
-import com.codingchallenge.taxrate.service.TaxRateService;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+/**
+ * This class is responsible for all the main operations like creating items from the input file, adding those items in the shopping cart,
+ * creating and calculating tax
+ */
 @Service
 @Slf4j
+@Getter
+@Setter
 public class ShoppingBasketService {
 
-    private static final String ITEM_SEPARATOR = " ";
-
-    @Autowired
     private ShoppingBasket basket;
-
-    @Autowired
     private ConsoleWriterService writer;
-
-    @Autowired
     private FileReaderService reader;
+    private ItemService itemService;
 
     @Autowired
-    private TaxRateService taxService;
+    public ShoppingBasketService(ShoppingBasket basket, ConsoleWriterService writer, FileReaderService reader, ItemService itemService) {
+        this.basket = basket;
+        this.writer = writer;
+        this.reader = reader;
+        this.itemService = itemService;
+    }
 
+    /**
+     * @param args
+     * @throws IOException
+     * @throws WrongInputFormatException
+     */
     public void processOrder(String... args) throws IOException, WrongInputFormatException {
-        String[] productLines = reader.readFile(args);
-        for (String productLine : productLines) {
-            ShoppingBasketItem item = extractItems(productLine);
+        for (String arg : args) {
+            String[] itemLines = reader.readFile(arg);
+            this.createShoppingBasket(itemLines);
+            ITaxCalculator tax = new BasicSalesTaxCalculator();
+            basket.setTotalSalesTax(tax.calculateTax(basket));
+            basket.calculateTotalPrice();
+            writer.printReceipt(basket);
+            basket.clearBasket();
+        }
+    }
+
+    /**
+     * @param itemLines Represents each line from the input file seperated by newline
+     * @return Shopping basket which contains all the items in it
+     */
+    public ShoppingBasket createShoppingBasket(String[] itemLines) {
+        for (String productLine : itemLines) {
+            ShoppingBasketItem item = itemService.extractItems(productLine);
             if (item != null) {
                 basket.addShoppingItem(item);
             }
         }
-        ITaxCalculator tax = new BasicSalesTaxCalculator();
-        writer.printReceipt(basket, tax.calculateTax(basket));
-        basket.clearBasket();
+        return this.basket;
     }
-
-    private ShoppingBasketItem extractItems(String line) {
-        ShoppingBasketItem items = null;
-        Item product = null;
-        String[] itemsDetails = line.split(ITEM_SEPARATOR);
-        double price = 0;
-        int quantity = 0;
-        boolean isImported;
-        try {
-            price = Double.valueOf(itemsDetails[itemsDetails.length - 1]);
-            quantity = Integer.valueOf(itemsDetails[0]);
-        } catch (NumberFormatException ex) {
-            log.error("There was error parsing the input", ex);
-        }
-        isImported = line.contains("imported");
-        itemsDetails = ArrayUtils.remove(itemsDetails, itemsDetails.length - 1);
-        itemsDetails = ArrayUtils.remove(itemsDetails, itemsDetails.length - 1);
-        itemsDetails = ArrayUtils.removeElement(itemsDetails, "imported");
-        itemsDetails = ArrayUtils.remove(itemsDetails, 0);
-        String name = ArrayUtils.toString(itemsDetails);
-        product = getProduct(price, name, isImported);
-
-        items = new ShoppingBasketItem(product, quantity, taxService.getTaxRate(product));
-        return items;
-    }
-
-    private Item getProduct(double price, String name, boolean isImported) {
-        Item product = null;
-        if (name.contains("book")) {
-            product = FactoryProvider.getFactory("book").createProduct(name, price, isImported);
-        } else if (name.contains("music")) {
-            product = FactoryProvider.getFactory("music").createProduct(name, price, isImported);
-        } else if (name.contains("chocolate")) {
-            product = FactoryProvider.getFactory("food").createProduct(name, price, isImported);
-        } else if (name.contains("pills")) {
-            product = FactoryProvider.getFactory("medical").createProduct(name, price, isImported);
-        } else {
-            product = FactoryProvider.getFactory("other").createProduct(name, price, isImported);
-        }
-        return product;
-    }
-
 }
