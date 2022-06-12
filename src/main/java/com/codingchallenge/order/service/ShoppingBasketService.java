@@ -36,16 +36,13 @@ public class ShoppingBasketService {
     private TaxRateService taxService;
 
     public void processOrder(String... args) throws IOException, WrongInputFormatException {
-        String[] productLines = reader.readFile(args);
-        for (String productLine : productLines) {
-            ShoppingBasketItem item = extractItems(productLine);
-            if (item != null) {
-                basket.addShoppingItem(item);
-            }
+        for (String arg : args) {
+            String[] itemLines = reader.readFile(arg);
+            this.createShoppingBasket(itemLines, basket);
+            ITaxCalculator tax = new BasicSalesTaxCalculator();
+            writer.printReceipt(basket, tax.calculateTax(basket));
+            basket.clearBasket();
         }
-        ITaxCalculator tax = new BasicSalesTaxCalculator();
-        writer.printReceipt(basket, tax.calculateTax(basket));
-        basket.clearBasket();
     }
 
     private ShoppingBasketItem extractItems(String line) {
@@ -89,4 +86,12 @@ public class ShoppingBasketService {
         return product;
     }
 
+    public void createShoppingBasket(String[] itemLines, ShoppingBasket basket) {
+        for (String productLine : itemLines) {
+            ShoppingBasketItem item = extractItems(productLine);
+            if (item != null) {
+                basket.addShoppingItem(item);
+            }
+        }
+    }
 }
